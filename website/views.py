@@ -5,11 +5,11 @@ import os
 from werkzeug.utils import secure_filename
 from .database_model import Project, Classes, db
 
-from .models.VGG import model
+from .models import VGG as model
 
 views = Blueprint('views', __name__)
 
-UPLOAD_FOLDER = 'static/uploads/'
+UPLOAD_FOLDER = 'website/static/uploads/'
 # This helper function use to check the extension of the file to make sure we load images
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'jfif'])
 def allowed_file(filename):
@@ -65,6 +65,10 @@ def create_project_page():
             new_project = Project(name=project_name, description=description)
             db.session.add(new_project)
             db.session.commit()
+            for class_ in classes:
+                new_class = Classes(className=class_,project_id= new_project.id)
+                db.session.add(new_class)
+                db.session.commit()
             flash('Project has been saved successfully', category='success')
             return redirect(url_for('views.home_page'))
     return render_template('create_project.html')

@@ -5,7 +5,7 @@ from os import path
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
-UPLOAD_FOLDER = 'static/uploads/'
+UPLOAD_FOLDER = 'website/static/uploads/'
 
 def create_app():
     app = Flask(__name__)
@@ -32,6 +32,3 @@ def create_database(app):
         print('Created Database!')
 
 app = create_app()
-@app.route('/display/<filename>')
-def display_image(filename):
-    return redirect(url_for('static', filename='uploads/' + filename), code=301)
