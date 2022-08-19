@@ -1,9 +1,83 @@
 {% extends "layout.html" %}
 {% block title %}Prediction{% endblock %}
+
 {% block content %}
-    <h1>Data Collection</h1>
-        <p>
-            In this slide we are goint to predict the input image
-        </p>
+<div class="container">
+      <div class="row">
+        <div class="form-group col-xs-6">
+          <label for="all_classes">Select a project</label>
+          <select class="form-control" style="color: white; background: #34568B;" id="all_classes">
+            {% for o in all_classes %}
+                    <option value="{{ o }}">{{ o }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group col-xs-6">
+          <label for="all_entries">Select a class</label>
+          <select class="form-control" style="color:white; background:#009B77;" id="all_entries">
+            {% for o in all_entries %}
+                    <option value="{{ o }}">{{ o }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" style="color:white; background:#3498DB;" id="process_input">Process selection!</button>
+      </div><br>
+      <div id="processed_results">
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+
+        $('#all_classes').change(function(){
+
+          $.getJSON('/_update_dropdown', {
+            selected_class: $('#all_classes').val()
+
+          }).success(function(data) {
+                $('#all_entries').html(data.html_string_selected);
+           })
+        });
+        $('#process_input').bind('click', function() {
+
+            $.getJSON('/_process_data', {
+                selected_class: $('#all_classes').val(),
+                selected_entry: $('#all_entries').val(),
+
+
+            }).success(function(data) {
+                $('#processed_results').text(data.random_text);
+            })
+          return false;
+
+        });
+      });
+    </script>
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8  offset-lg-2">
+            <h2 class="mt-5">Collect Data sets</h2>
+			<form method="post" action="{{ url_for('collectData.tasks') }}">
+			<input type="submit" value="Stop/Start" name="stop" />
+			<input type="submit" value="Capture" name="click"/>
+			</form>
+            <img src="{{ url_for('collectData.video') }}" height="30%">
+
+        </div>
+    </div>
+</div>
+        <h3 style="font-family:courier;">Steps:</h3>
+        <ol style="font-family:courier;">
+        <li> Select projects</li>
+        <li> show the classes with selected points</li>
+        <li> label shows the images in each class</li>
+        <li> Dispaly video</li>
+        <li> Button to capture the image</li>
 
 {% endblock %}

@@ -1,11 +1,13 @@
 from flask import request, redirect, render_template
+from wtforms import SelectField
+from flask_wtf import FlaskForm
 #import flash to show the text message https://flask.palletsprojects.com/en/1.1.x/patterns/flashing/
 from flask import flash, Blueprint, url_for
 import os
 from werkzeug.utils import secure_filename
 from .database_model import Project, Classes, db
 
-from .models import VGG as model
+# from .models import VGG as model
 
 views = Blueprint('views', __name__)
 
@@ -38,15 +40,18 @@ def prediction_page():
         # to predict the image content
         img_path = os.path.join(UPLOAD_FOLDER, filename)
         flash('Image successfully uploaded and displayed below', category='success')
-        classification, labels, values = model.predict_image(img_path)
+        # classification, labels, values = model.predict_image(img_path)
+        classification = 'none'
         return render_template('prediction.html', filename=filename, prediction=classification, max=100, labels=labels, values=values)
     else:
         flash('Allowed image types are - png, jpg, jpeg, gif',category='error')
         return redirect(request.url)
 
-@views.route("/datacollection")
-def datacollection_page():
-    return render_template("datacollection.html")
+
+class Form(FlaskForm):
+    projects = SelectField('project', choices=[])
+    classes = SelectField('classes', choices=[])
+
 
 @views.route("/createproject", methods=['GET','POST'])
 def create_project_page():
@@ -72,22 +77,3 @@ def create_project_page():
             flash('Project has been saved successfully', category='success')
             return redirect(url_for('views.home_page'))
     return render_template('create_project.html')
-
-# capture = cv2.VideoCapture(0)
-#
-# def load_video(cap):
-#     while(True):
-#         sucssess, image = cap.read()
-#         if not sucssess:
-#             print("could not load video")
-#             break;
-#
-#         yield image
-
-# @views.route('/video')
-# def display_video():
-#     global capture
-#
-#     # Return the result on the web
-#     return Response(load_video(capture),
-#                     mimetype='multipart/x-mixed-replace; boundary=frame')

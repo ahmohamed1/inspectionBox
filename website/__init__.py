@@ -17,8 +17,9 @@ def create_app():
     db.init_app(app)
 
     from .views import views
-
+    from .collectData import collectData
     app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(collectData, url_prefix='/')
 
     from .database_model import Project, Classes
     create_database(app)
