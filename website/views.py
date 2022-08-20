@@ -1,7 +1,7 @@
 from flask import request, redirect, render_template
 from wtforms import SelectField
 from flask_wtf import FlaskForm
-#import flash to show the text message https://flask.palletsprojects.com/en/1.1.x/patterns/flashing/
+# import flash to show the text message https://flask.palletsprojects.com/en/1.1.x/patterns/flashing/
 from flask import flash, Blueprint, url_for
 import os
 from werkzeug.utils import secure_filename
@@ -14,15 +14,18 @@ views = Blueprint('views', __name__)
 UPLOAD_FOLDER = 'website/static/uploads/'
 # This helper function use to check the extension of the file to make sure we load images
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'jfif'])
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @views.route('/')
 def home_page():
     return render_template("home.html")
 
 
-@views.route("/prediction", methods=["GET","POST"])
+@views.route("/prediction", methods=["GET", "POST"])
 def prediction_page():
     if 'file' not in request.files:
         flash('No file part', category='error')
@@ -42,9 +45,10 @@ def prediction_page():
         flash('Image successfully uploaded and displayed below', category='success')
         # classification, labels, values = model.predict_image(img_path)
         classification = 'none'
-        return render_template('prediction.html', filename=filename, prediction=classification, max=100, labels=labels, values=values)
+        return render_template('prediction.html', filename=filename, prediction=classification, max=100, labels=labels,
+                               values=values)
     else:
-        flash('Allowed image types are - png, jpg, jpeg, gif',category='error')
+        flash('Allowed image types are - png, jpg, jpeg, gif', category='error')
         return redirect(request.url)
 
 
@@ -53,13 +57,13 @@ class Form(FlaskForm):
     classes = SelectField('classes', choices=[])
 
 
-@views.route("/createproject", methods=['GET','POST'])
+@views.route("/createproject", methods=['GET', 'POST'])
 def create_project_page():
     if request.method == 'POST':
         project_name = request.form.get('name')
         description = request.form.get('description')
         classes = request.form.getlist('class[]')
-
+        class_list = []
         # Check if there is project have same name
         project = Project.query.filter_by(name=project_name).first()
         if project:
@@ -71,9 +75,25 @@ def create_project_page():
             db.session.add(new_project)
             db.session.commit()
             for class_ in classes:
-                new_class = Classes(className=class_,project_id= new_project.id)
+                new_class = Classes(className=class_, project_id=new_project.id)
                 db.session.add(new_class)
                 db.session.commit()
+                class_list.append(class_)
             flash('Project has been saved successfully', category='success')
+            create_project_folder(new_project.name, class_list)
             return redirect(url_for('views.home_page'))
     return render_template('create_project.html')
+
+
+def create_project_folder(project_name, classes):
+    # make shots directory to save pics
+    try:
+        new_dir = os.path.join('./projects', project_name)
+        os.mkdir(new_dir)
+        print(new_dir)
+        for cls in classes:
+            class_dir = os.path.join(new_dir, 'dataset', 'train', cls)
+            print(class_dir)
+            os.makedirs(class_dir)
+    except OSError as error:
+        print(error)
