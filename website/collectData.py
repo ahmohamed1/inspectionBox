@@ -14,12 +14,6 @@ save_image = False
 camera = cv2.VideoCapture(0)
 collectData = Blueprint('collectData', __name__)
 
-# make shots directory to save pics
-try:
-    os.mkdir('./images')
-except OSError as error:
-    pass
-
 
 # https://towardsdatascience.com/camera-app-with-flask-and-opencv-bd147f6c0eec
 @collectData.route('/requests', methods=['POST', 'GET'])

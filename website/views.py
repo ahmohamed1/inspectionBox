@@ -45,8 +45,7 @@ def prediction_page():
         flash('Image successfully uploaded and displayed below', category='success')
         # classification, labels, values = model.predict_image(img_path)
         classification = 'none'
-        return render_template('prediction.html', filename=filename, prediction=classification, max=100, labels=labels,
-                               values=values)
+        return render_template('prediction.html', filename=filename, prediction=classification, max=100)
     else:
         flash('Allowed image types are - png, jpg, jpeg, gif', category='error')
         return redirect(request.url)
@@ -74,11 +73,11 @@ def create_project_page():
             new_project = Project(name=project_name, description=description)
             db.session.add(new_project)
             db.session.commit()
-            for class_ in classes:
-                new_class = Classes(className=class_, project_id=new_project.id)
+            for class_name in classes:
+                new_class = Classes(className=class_name, project_id=new_project.id)
                 db.session.add(new_class)
                 db.session.commit()
-                class_list.append(class_)
+                class_list.append(class_name)
             flash('Project has been saved successfully', category='success')
             create_project_folder(new_project.name, class_list)
             return redirect(url_for('views.home_page'))

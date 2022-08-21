@@ -25,5 +25,5 @@ class Project(db.Model):
 
 class Classes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    className = db.Column(db.String(120), unique=True)
+    className = db.Column(db.String(120), unique=False)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
