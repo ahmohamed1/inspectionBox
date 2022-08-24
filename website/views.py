@@ -70,11 +70,11 @@ def create_project_page():
             return render_template('create_project.html')
         else:
             # Create project
-            new_project = Project(name=project_name, description=description)
+            new_project = Project(name=project_name, description=description, nn_model="")
             db.session.add(new_project)
             db.session.commit()
             for class_name in classes:
-                new_class = Classes(className=class_name, project_id=new_project.id)
+                new_class = Classes(className=class_name, project_id=new_project.id, items_number=0)
                 db.session.add(new_class)
                 db.session.commit()
                 class_list.append(class_name)

@@ -32,8 +32,9 @@ def tasks():
                 camera = cv2.VideoCapture(0)
                 camera_switch = 1
     elif request.method == 'GET':
-        return redirect(request.referrer)
-    return redirect(request.referrer)
+        return jsonify(random_text="OK")
+    return jsonify(random_text="OK")
+
 
 def generate_frames():
     global save_image, project_name, class_name
@@ -44,9 +45,12 @@ def generate_frames():
             if save_image:
                 save_image = 0
                 now = datetime.datetime.now()
-                p = os.path.sep.join(['images', "shot_{}.png".format(str(now).replace(":", ''))])
+                path_ = os.path.join('projects', project_name, 'dataset', 'train', class_name)
+                p = os.path.sep.join([path_, "shot_{}.png".format(str(now).replace(":", ''))])
                 cv2.imwrite(p, frame)
-                print(project_name,class_name)
+                cls = Classes.query.filter_by(class_name=class_name).first()
+                setattr(cls, 'no_of_logins', cls.items_number + 1)
+                print(p)
             try:
                 ret, buffer = cv2.imencode('.jpg', frame)
                 frame = buffer.tobytes()
@@ -62,6 +66,7 @@ def generate_frames():
 @collectData.route('/video')
 def video():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 def get_dropdown_values():
     """
@@ -81,25 +86,23 @@ could be defined globally
     # {'Toyota': ['Tercel', 'Prius'],
     #  'Honda': ['Accord', 'Brio']}
 
-    carbrands = Project.query.all()
+    projects = Project.query.all()
     # Create an empty dictionary
     myDict = {}
-    for p in carbrands:
+    for p in projects:
 
         key = p.name
-        brand_id = p.id
+        project_id = p.id
 
         # Select all car models that belong to a car brand
-        q = Classes.query.filter_by(project_id=brand_id).all()
+        q = Classes.query.filter_by(project_id=project_id).all()
 
         # build the structure (lst_c) that includes the names of the car models that belong to the car brand
         lst_c = []
         for c in q:
             lst_c.append(c.className)
         myDict[key] = lst_c
-
     class_entry_relations = myDict
-
     return class_entry_relations
 
 
@@ -132,13 +135,13 @@ def process_data():
 
 @collectData.route('/datacollection', methods=['POST', 'GET'])
 def index():
-    """
-    initialize drop down menus
-    """
+    global project_name
+    #initialize drop down menus
     class_entry_relations = get_dropdown_values()
     default_classes = sorted(class_entry_relations.keys())
     default_values = class_entry_relations[default_classes[0]]
 
+    #class_list = {'data':[cls.to_dict() for cls in Classes.query.filter_by(name=project_name).all()]}
     return render_template('datacollection.html',
                            all_classes=default_classes,
                            allDatas_entries=default_values)
