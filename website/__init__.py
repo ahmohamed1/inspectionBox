@@ -18,14 +18,15 @@ def create_app():
 
     from .views import views
     from .collectData import collectData
+    from .views_projects import views_projects
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(collectData, url_prefix='/')
+    app.register_blueprint(views_projects, url_prefix='/')
 
     from .database_model import Project, Classes
     create_database(app)
 
     return app
-
 
 def create_database(app):
     if not path.exists('website/' + DB_NAME):

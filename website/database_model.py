@@ -1,5 +1,4 @@
 from . import db
-from flask_login import UserMixin
 from sqlalchemy.sql import func  # this use to get  the data created
 
 class Project(db.Model):
@@ -12,6 +11,8 @@ class Project(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     #user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    def __repr__(self):
+        return '{}'.format(self.name)
 
 class Classes(db.Model):
     id = db.Column(db.Integer, primary_key=True)

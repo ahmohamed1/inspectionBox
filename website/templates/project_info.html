@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}Project Information{% endblock %}
+{% block content %}
+
+<table>
+    <thread>
+        <tr>
+            <th>ID</th>
+            <th>Class name</th>
+            <th>Number of Items</th>
+            <th>Project ID</th>
+        </tr>
+    </thread>
+    <tbody>
+        {% for cls in classes %}
+        <tr>
+            <td> {{ cls.id }} </td>
+            <td> {{ cls.className }} </td>
+            <td> {{ cls.items_number }} </td>
+            <td> {{ cls.project_id }} </td>
+
+            <td>
+                <form method="POST" action="{{ url_for('views_projects.delect_class', class_id=cls.id) }}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    <h3>Add new class</h3>
+    <form method="POST" action="/project_info">
+        {{ form.csrf_token }}
+        {{ form.class_name.label }} {{ form.class_name(size=20) }}
+        <input type="submit" value="Add Class">
+    </form>
+</div>
+<div>
+    <h3>Delete class</h3>
+    <form method="POST" action="{{ url_for('views_projects.delect_class', class_id=3) }}">
+        <input type="submit" value="Add Class">
+    </form>
+</div>
+{% endblock %}
