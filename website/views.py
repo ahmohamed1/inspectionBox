@@ -21,6 +21,7 @@ def allowed_file(filename):
 
 @views.route('/')
 def home_page():
+    session['project'] = 'None'
     return render_template("home.html")
 
 @views.route("/prediction", methods=["GET", "POST"])
