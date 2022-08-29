@@ -56,22 +56,32 @@
         });
       });
     </script>
-              <table id="classes" class="table table-striped">
-                  <thread>
-                      <tr>
-                          <th>class</th>
-                          <th>Number of items</th>
-                      </tr>
-                  </thread>
-                  <tbody>
-                  {% for class in classes %}
-                  <tr>
-                      <th>{{class.className}}</th>
-                      <th>{{class.items_number}}</th>
-                  </tr>
-                  {% endfor %}
-                  </tbody>
-              </table>
+        <table>
+            <thread>
+                <tr>
+                    <th>ID</th>
+                    <th>Class name</th>
+                    <th>Number of Items</th>
+                    <th>Project ID</th>
+                </tr>
+            </thread>
+            <tbody>
+                {% for cls in classes %}
+                <tr>
+                    <td> {{ cls.id }} </td>
+                    <td> {{ cls.className }} </td>
+                    <td> {{ cls.items_number }} </td>
+                    <td> {{ cls.project_id }} </td>
+                    <td>
+                        <form method="GET">
+                            <input type="radio" id="{{cls.id}}" name="{{cls.name}}">
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     </div>
     <div class="col-md-8">
         <div class="col-lg-8  offset-lg-2">

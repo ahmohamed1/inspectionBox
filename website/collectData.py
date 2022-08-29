@@ -2,7 +2,7 @@ import datetime, time
 import os
 
 import cv2
-from flask import flash, Blueprint, Response, redirect
+from flask import flash, Blueprint, Response, redirect, session
 from flask import request, render_template, jsonify
 
 from .database_model import Project, Classes
@@ -140,8 +140,12 @@ def index():
     class_entry_relations = get_dropdown_values()
     default_classes = sorted(class_entry_relations.keys())
     default_values = class_entry_relations[default_classes[0]]
+    project_name = session['project']
+    project = Project.query.filter_by(name=project_name).first()
+    classes = Classes.query.filter_by(project_id=project.id).all()
 
     #class_list = {'data':[cls.to_dict() for cls in Classes.query.filter_by(name=project_name).all()]}
     return render_template('datacollection.html',
                            all_classes=default_classes,
-                           allDatas_entries=default_values)
+                           allDatas_entries=default_values,
+                           classes=classes)

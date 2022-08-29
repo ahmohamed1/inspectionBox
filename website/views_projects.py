@@ -41,7 +41,6 @@ def select_project():
     if form.validate_on_submit():
         flash('Project {} has been selected!!!'.format(form.opts.data), category='success')
         session["project"] = str(form.opts.data)
-
     return render_template('selectproject.html', form=form)
 
 
