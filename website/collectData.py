@@ -3,7 +3,7 @@ import os
 
 import cv2
 from flask import flash, Blueprint, Response, redirect, session
-from flask import request, render_template, jsonify
+from flask import request, render_template, jsonify, url_for
 
 from .database_model import Project, Classes
 
@@ -11,7 +11,7 @@ from flask_wtf import FlaskForm, Form
 from wtforms_sqlalchemy.fields import QuerySelectField
 
 
-global class_name
+global class_name, project_name, class_id
 global camera_switch, save_image
 camera_switch = 1
 save_image = 0
@@ -48,13 +48,12 @@ def generate_frames():
         if success:
             if save_image:
                 save_image = 0
-                flash("Save", category="success")
                 now = datetime.datetime.now()
-                path_ = os.path.join('projects', session['project'], 'dataset', 'train', class_name)
+                path_ = os.path.join('projects',project_name, 'dataset', 'train', class_name.className)
                 p = os.path.sep.join([path_, "shot_{}.png".format(str(now).replace(":", ''))])
                 cv2.imwrite(p, frame)
-                cls = Classes.query.filter_by(class_name=class_name).first()
-                setattr(cls, 'no_of_logins', cls.items_number + 1)
+                cls = Classes.query.filter_by(id=class_name.id).first()
+                setattr(class_name, 'no_of_logins', class_name.items_number + 1)
                 print(p)
             try:
                 ret, buffer = cv2.imencode('.jpg', frame)
@@ -73,8 +72,9 @@ def video():
 
 
 def choice_query():
-    project_name = session['project']
-    project = Project.query.filter_by(name=project_name).first()
+    global project_name
+    project = Project.query.filter_by(name=session['project']).first()
+    project_name = project.name
     classes = Classes.query.filter_by(project_id=project.id).all()
     return classes
 
@@ -83,14 +83,15 @@ class ChoiceForm(FlaskForm):
 
 @collectData.route('/datacollection', methods=['POST', 'GET'])
 def index():
-    global class_name
+    global class_name, class_id
     form = ChoiceForm()
     project_name = session['project']
     project = Project.query.filter_by(name=project_name).first()
     classes = Classes.query.filter_by(project_id=project.id).all()
     if form.validate_on_submit():
-        class_name = str(form.opts.data)
-        flash("Class {} selected!!".format(class_name), category='success')
+        class_name = form.opts.data
+        class_id = form.opts.data.id
+        flash("Class {} selected!!".format(class_name.className), category='success')
     #class_list = {'data':[cls.to_dict() for cls in Classes.query.filter_by(name=project_name).all()]}
     return render_template('datacollection.html',
                            classes=classes,
