@@ -20,6 +20,9 @@ class Classes(db.Model):
     items_number = db.Column(db.Integer, unique=False)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
 
+    def __repr__(self):
+        return '{}'.format(self.className)
+
     def to_dict(self):
         return {
             'className':self.className,
