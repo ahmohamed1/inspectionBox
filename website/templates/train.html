@@ -1,10 +1,25 @@
 {% extends "layout.html" %}
 {% block title %}Training{% endblock %}
 {% block content %}
+
+{% import "bootstrap/wtf.html" as wtf %}
     <div class="container">
       <div class="row">
         <div class="col-sm">
-          One of three columns
+          <h2>Training hyperparamters</h2>
+            <form action="" method="post" class="form" role="form">
+                <div class="row">
+                    <div class="form-group">
+                        {{ wtf.form_field(form.select_model) }}
+                        {{ wtf.form_field(form.batch_size) }}
+                        {{ wtf.form_field(form.learning_rate) }}
+                        {{ wtf.form_field(form.optimizer) }}
+                        {{ wtf.form_field(form.loss_function) }}
+                    </div>
+                </div>
+                {{ form.submit_start(class="btn btn-outline-info") }}
+                {{ form.submit_stop(class="btn btn-outline-danger") }}
+            </form>
         </div>
         <div class="col-sm">
           One of three columns
