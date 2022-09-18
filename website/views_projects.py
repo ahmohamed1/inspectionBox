@@ -17,6 +17,7 @@ views_projects = Blueprint('views_projects', __name__)
 
 def choice_query():
     return Project.query
+
 def add_classes(classes, project_name, project_id):
     class_list = []
     for class_name in classes:
@@ -99,7 +100,7 @@ def create_project_page():
 def create_project_folder(project_name, classes):
     # make shots directory to save pics
     try:
-        new_dir = os.path.join('../projects', project_name)
+        new_dir = os.path.join('projects', project_name)
         if os.path.isfile(new_dir):
             print(new_dir)
             os.mkdir(new_dir)
@@ -113,7 +114,7 @@ def create_project_folder(project_name, classes):
 def delete_class_folder(project_name, cls):
     # make shots directory to save pics
     try:
-        new_dir = os.path.join('../projects', project_name)
+        new_dir = os.path.join('projects', project_name)
         class_dir = os.path.join(new_dir, 'dataset', 'train', cls)
         if os.path.exists(class_dir) and os.path.isdir(class_dir):
             shutil.rmtree(class_dir)

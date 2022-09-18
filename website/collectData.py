@@ -5,7 +5,7 @@ import cv2
 from flask import flash, Blueprint, Response, redirect, session
 from flask import request, render_template, jsonify, url_for
 
-from .database_model import Project, Classes
+from .database_model import Project, Classes, db
 
 from flask_wtf import FlaskForm, Form
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -13,7 +13,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField
 
 global class_name, project_name, class_id
 global camera_switch, save_image
-camera_switch = 1
+camera_switch = 0
 save_image = 0
 camera = cv2.VideoCapture(0)
 collectData = Blueprint('collectData', __name__)
@@ -27,6 +27,9 @@ def tasks():
         if request.form.get('click') == 'Capture':
             global save_image
             save_image = 1
+            cls = Classes.query.filter(Classes.id == class_name.id).update({'items_number': Classes.items_number + 1})
+            db.session.commit()
+
         elif request.form.get('stop') == 'Stop/Start':
             if camera_switch == 1:
                 camera_switch = 0
@@ -52,9 +55,6 @@ def generate_frames():
                 path_ = os.path.join('projects',project_name, 'dataset', 'train', class_name.className)
                 p = os.path.sep.join([path_, "shot_{}.png".format(str(now).replace(":", ''))])
                 cv2.imwrite(p, frame)
-                cls = Classes.query.filter_by(id=class_name.id).first()
-                setattr(class_name, 'no_of_logins', class_name.items_number + 1)
-                print(p)
             try:
                 ret, buffer = cv2.imencode('.jpg', frame)
                 frame = buffer.tobytes()
