@@ -14,7 +14,7 @@
         <div class="col-md-4" style="border:1px solid red;">
             <div class="form-group col-xs-6">
                 <h4>Select class to save data</h4>
-                <form action="/datacollection" method="POST">
+                <form action="/datacollection" method="POST" enctype="multipart/form-data">
                     {{form.csrf_token}}
                     {{ form.opts}}
                     <ul>
