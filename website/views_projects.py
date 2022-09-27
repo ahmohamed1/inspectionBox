@@ -104,6 +104,10 @@ def create_project_folder(project_name, classes):
         if os.path.isfile(new_dir):
             print(new_dir)
             os.mkdir(new_dir)
+        model_save_directory = os.path.join('projects', project_name, 'models')
+        if os.path.isfile(model_save_directory):
+            print(model_save_directory)
+            os.mkdir(model_save_directory)
         for cls in classes:
             class_dir = os.path.join(new_dir, 'dataset', 'train', cls)
             os.makedirs(class_dir)
