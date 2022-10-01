@@ -33,8 +33,7 @@ class ProjectDetails():
         self.model_name = model_name
 
     def get_paths(self):
-        for path in self.classes_path:
-            print(path)
+        return self.classes_path
     def get_class_number(self):
         return len(self.classes_path)
 
@@ -71,10 +70,11 @@ def train_page():
                                 form.optimizer.data,
                                 form.learning_rate.data,
                                 form.loss_function.data,
-                                form.batch_size.data)
+                                form.batch_size.data,
+                                project_details.get_paths())
             created_model.build(project_details.get_class_number())
         if form.submit_start.data:
-            print("Start")
+            created_model.train()
         if form.submit_stop.data:
             print("Stop")
         if form.submit_save_model.data:
